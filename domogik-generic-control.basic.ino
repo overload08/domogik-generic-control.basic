@@ -7,7 +7,7 @@
  * - check for each step if the message respect xPL protocol
  * - parse each command line
  *
- * Copyright (C) 2012 johan@pirlouit.ch, olivier.lebrun@gmail.com
+ * Copyright (C) 2016 johan@pirlouit.ch, olivier.lebrun@gmail.com, y.poilvert@geekinfo.fr
  * Original version by Gromain59@gmail.com
  *
  * This program is free software; you can redistribute it and/or
@@ -31,8 +31,6 @@
 
 #include "xPL.h"
 
-int initxpl=0;
-
 xPL xpl;
 
 // Enter a MAC address and IP address for your controller below.
@@ -53,9 +51,7 @@ void AfterParseAction(xPL_Message * message)
 {
       if (message->IsSchema_P(PSTR("control"), PSTR("basic")))
       {
-        Serial.println("Message received !");  
         Serial.println(message->toString());
-        Serial.println(message->command[1].value);
         xPL_Message cmd;
       
         cmd.hop = 1;
@@ -97,18 +93,14 @@ void setup()
 
   Serial.println("Initialising...");
   delay(10000);
+  
   xPL_Message init;
-
   init.hop = 1;
   init.type = XPL_TRIG;
-
   init.SetTarget_P(PSTR("*"));
   init.SetSchema_P(PSTR("control"), PSTR("basic"));
-
   init.AddCommand_P(PSTR("device"),PSTR("xpl-arduino.thermostat"));
-  //init.AddCommand_P(PSTR("type"),PSTR("switch"));
   init.AddCommand_P(PSTR("current"),PSTR("0"));
-
   xpl.SendMessage(&init);
 
   Serial.println("Done !");
